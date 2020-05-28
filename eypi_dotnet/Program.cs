@@ -2,6 +2,7 @@
 using CommandLine;
 using System.Collections.Generic;
 using eypi_dotnet.tests;
+using Newtonsoft.Json;
 
 namespace eypi_dotnet
 {
@@ -12,8 +13,11 @@ namespace eypi_dotnet
             [Option('u', "uri", Required = true, HelpText = "MongoDB URI")]
             public string Uri { get; set; }
 
-            [Option('c', "command", Required = true, HelpText = "Command to run")]
-            public string Command { get; set; }
+            [Option('t', "test_name", Required = true, HelpText = "Test to run")]
+            public string TestName { get; set; }
+
+            [Option('a', "test_args", Required = true, HelpText = "Test args")]
+            public string TestArgs { get; set; }
         }
 
         static void Main(string[] args)
@@ -21,31 +25,33 @@ namespace eypi_dotnet
             Parser.Default.ParseArguments<Options>(args)
                    .WithParsed<Options>(o =>
                    {
-                       var runner = new CommandRunner();
-                       runner.RunCommand(o.Uri, o.Command);
+                        Dictionary<string, object> testArgs = 
+                        JsonConvert.DeserializeObject<Dictionary<string, object>>(o.TestArgs);
+                        var runner = new TestRunner();
+                        runner.RunTest(o.Uri, o.TestName, testArgs);
                    });
         }
 
-        public class CommandRunner
+        public class TestRunner
         {
-            private Dictionary<string, MongoDBTest> _commands = new Dictionary<string, MongoDBTest>();
+            private Dictionary<string, MongoDBTest> _tests = new Dictionary<string, MongoDBTest>();
 
-            public CommandRunner()
+            public TestRunner()
             {
-                _commands.Add("paginate", new Paginate());
+                _tests.Add("paginate", new Paginate());
             }
         
-            public void RunCommand(string connectionString, string command )
+            public void RunTest(string connectionString, string testName, Dictionary<string, object> testArgs )
             {
-                if (_commands.ContainsKey(command))
+                if (_tests.ContainsKey(testName))
                 {
-                    var test = _commands[command];
-                    test.RunTest(connectionString);
-                    Console.Out.WriteLine(String.Format("Succesfully run {0}", command));
+                    var test = _tests[testName];
+                    test.RunTest(connectionString, testArgs);
+                    Console.Out.WriteLine(String.Format("Successfully run {0}", testName));
                 }
                 else
                 {
-                    Console.Error.WriteLine(String.Format("Unknown test {0}", command));
+                    Console.Error.WriteLine(String.Format("Unknown test {0}", testName));
                 }
             }
         }

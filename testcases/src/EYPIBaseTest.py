@@ -1,6 +1,7 @@
 
 import os
 from datetime import datetime
+import json
 
 from pymongo import MongoClient
 from pysys.basetest import BaseTest
@@ -67,11 +68,13 @@ class EYPIBaseTest(BaseTest):
 		path_stderr = f'dotnet_build_err_{index}.log'
 		self.startProcess(command, args, state=FOREGROUND, stdout=path_stdout, stderr=path_stderr, workingDir=workingDir, environs=environs)
 
-	def run_eypi_dotnet(self, command):
+	def run_eypi_dotnet(self, test_name, test_args):
 		args = []
 		args.append('run')
 		args.append(f"--uri={self.connectionString}")
-		args.append(f"--command={command}")
+		args.append(f"--test_name={test_name}")
+		json_args = json.dumps(test_args)
+		args.append(f"--test_args={test_args}")
 
 		environs = {}
 		for key in os.environ: environs[key] = os.environ[key]
