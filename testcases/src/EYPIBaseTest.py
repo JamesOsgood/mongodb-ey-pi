@@ -1,0 +1,115 @@
+
+import os
+from datetime import datetime
+
+from pymongo import MongoClient
+from pysys.basetest import BaseTest
+from pysys.constants import FOREGROUND
+from pysys.constants import BACKGROUND
+
+class EYPIBaseTest(BaseTest):
+	def __init__ (self, descriptor, outsubdir, runner):
+		BaseTest.__init__(self, descriptor, outsubdir, runner)
+
+		self.db_connection = None
+		self.connectionString = self.project.MONGODB_CONNECTION_STRING.replace("~", "=")
+
+		# Message batching
+		self.currentMessageBatch = []
+		self.MESSAGE_BATCH_SIZE = 10000
+		self.messages_processed = 0
+
+		self.defaultToDate = datetime(2019,9,1)
+		self.dotnet_index = -1
+		self.PROCESS_TIMEOUT=60.0
+
+	def get_dotnet_index(self):
+		self.dotnet_index += 1
+		return self.dotnet_index
+
+	# open db connection
+	def get_db_connection(self):
+		if self.db_connection is None:
+			self.log.info("Connecting to: %s" % self.connectionString)
+			client = MongoClient(self.connectionString)
+			self.db_connection = client.get_database()
+
+		return self.db_connection
+	
+	def importFileMongoImport(self, filePath, collection):
+
+		args = []
+		args.append('--headerline')
+		args.append('--drop')
+		args.append('--type=csv')
+		args.append(f'--collection={collection}')
+		args.append(f'--file={filePath}')
+		args.append(f'--uri="{self.project.MONGODB_CONNECTION_STRING.replace("~", "=")}"')
+
+		command = self.project.MONGOIMPORT
+		self.log.info("%s %s" % (command, " ".join(args)))
+		
+		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log' )
+
+	def build_eypi_dotnet(self):
+		args = []
+		args.append('build')
+
+		environs = {}
+		for key in os.environ: environs[key] = os.environ[key]
+
+		command = self.project.DOTNET
+		self.log.info("%s %s" % (command, " ".join(args)))
+		workingDir = os.path.abspath("../../eypi_dotnet")
+
+		index = self.get_dotnet_index()
+		path_stdout = f'dotnet_build_out_{index}.log'
+		path_stderr = f'dotnet_build_err_{index}.log'
+		self.startProcess(command, args, state=FOREGROUND, stdout=path_stdout, stderr=path_stderr, workingDir=workingDir, environs=environs)
+
+	def run_eypi_dotnet(self, command):
+		args = []
+		args.append('run')
+		args.append(f"--uri={self.connectionString}")
+		args.append(f"--command={command}")
+
+		environs = {}
+		for key in os.environ: environs[key] = os.environ[key]
+
+		command = self.project.DOTNET
+		self.log.info("%s %s" % (command, " ".join(args)))
+		workingDir = os.path.abspath("../../eypi_dotnet")
+
+		index = self.get_dotnet_index()
+		path_stdout = f'dotnet_run_out_{index}.log'
+		path_stderr = f'dotnet_run_err_{index}.log'
+		self.startProcess(command, args, state=FOREGROUND, stdout=path_stdout, stderr=path_stderr, workingDir=workingDir, environs=environs)
+
+	def run_eypi_dotnet_async(self, command):
+		args = []
+		args.append('run')
+		args.append(f"--uri={self.connectionString}")
+		args.append(f"--command={command}")
+
+		environs = {}
+		for key in os.environ: environs[key] = os.environ[key]
+
+		command = self.project.DOTNET
+		self.log.info("%s %s" % (command, " ".join(args)))
+		workingDir = os.path.abspath("../../eypi_dotnet")
+
+		index = self.get_dotnet_index()
+		path_stdout = f'dotnet_run_out_{index}.log'
+		path_stderr = f'dotnet_run_err_{index}.log'
+		return self.startProcess(command, args, state=BACKGROUND, stdout=path_stdout, stderr=path_stderr, workingDir=workingDir, environs=environs)
+
+	def run_eypi_dotnet_commands(self, commands):
+
+		processes = []
+		for command in commands:
+			p = self.run_eypi_dotnet_async(command)
+			processes.append(p)
+
+		for p in processes:
+			self.waitProcess(p, self.PROCESS_TIMEOUT)
+		
