@@ -133,3 +133,6 @@ dmypy.json
 # Dotnet stuff
 bin/
 obj/
+
+# Let each env have its own unix.properties
+unix.properties
