@@ -2,6 +2,7 @@
 import os
 from datetime import datetime
 import json
+import re
 
 from pymongo import MongoClient
 from pysys.basetest import BaseTest
@@ -9,9 +10,10 @@ from pysys.constants import FOREGROUND
 from pysys.constants import BACKGROUND
 
 class EYPIBaseTest(BaseTest):
-	def __init__ (self, descriptor, outsubdir, runner):
+	def __init__ (self, test_id, descriptor, outsubdir, runner):
 		BaseTest.__init__(self, descriptor, outsubdir, runner)
 
+		self.test_id = test_id
 		self.db_connection = None
 		self.connectionString = self.project.MONGODB_CONNECTION_STRING.replace("~", "=")
 
@@ -115,4 +117,32 @@ class EYPIBaseTest(BaseTest):
 
 		for p in processes:
 			self.waitProcess(p, self.PROCESS_TIMEOUT)
+
+
+	def getFilesToProcess(self, data_dir = None):
+		if not data_dir:
+			data_dir = self.project.DATA_DIR
+
+		p = re.compile('.*_(\d*)gb.*')
+		filepaths = []
+		for file in os.listdir(data_dir):
+			if file.endswith(".csv"):
+				m = p.match(file)
+				size = int(m[1])
+				filepaths.append( (size, os.path.join(data_dir, file)))
+
+		return filepaths
+
+	def write_test_result(self, instance_id, time_taken):
+		db = self.get_db_connection()
+		test_results = db.test_results
+		
+		doc = { 
+			'test_id' : self.test_id, 
+			'instance_id' : instance_id,
+			'ts' : datetime.now(), 
+			'time_taken' : time_taken }
+		test_results.insert_one(doc)
+
+				
 		
