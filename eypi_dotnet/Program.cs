@@ -39,6 +39,7 @@ namespace eypi_dotnet
             public TestRunner()
             {
                 _tests.Add("paginate", new Paginate());
+                _tests.Add("update", new Update());
             }
         
             public void RunTest(string connectionString, string testName, Dictionary<string, object> testArgs )

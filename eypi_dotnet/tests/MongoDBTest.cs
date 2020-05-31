@@ -15,5 +15,17 @@ namespace eypi_dotnet.tests
             var client = new MongoClient(connectionString);
             return client.GetDatabase(database);
         }
+    
+        // Write test result
+        protected void WriteTestResult(IMongoDatabase db, string testId, string instanceId, double timeTaken)
+        {
+            TestResult tr = new TestResult{TestID=testId, 
+                InstanceID=instanceId,
+                TS=DateTime.Now,
+                TimeTaken=timeTaken};
+
+            IMongoCollection<TestResult> coll = db.GetCollection<TestResult>("test_results");
+            coll.InsertOne(tr);
+        }
     }
 }   

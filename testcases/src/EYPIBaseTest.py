@@ -121,7 +121,7 @@ class EYPIBaseTest(BaseTest):
 
 	def getFilesToProcess(self, data_dir = None):
 		if not data_dir:
-			data_dir = self.project.DATA_DIR
+			data_dir = os.path.expanduser(self.project.DATA_DIR)
 
 		p = re.compile('.*_(\d*)gb.*')
 		filepaths = []
