@@ -55,6 +55,23 @@ class EYPIBaseTest(BaseTest):
 		
 		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=3600 )
 
+	def downloadFile(self, collection, output_path):
+
+		fields="AP_AR,Year,Period,EntityCode,EntityName,EntityVATID,ReportingCountry,Inv.Date,PostingDate,Doc.No,Invoiceno,Reportingperiod,Reportingcurrency,Netamount(repcurr),VATamount(repcurr),Grossamount(repcurr),Globalcurrency,Netamount(globalcurr),VATamount(globalcurr),Grossamount(globalcurr),Tx.Code,Tx.CodeDesc,VATRate,VATCategory,EYTaxCodeNET,EYTaxCodeVAT,Sales_Purchase,Businesspartnernumber,Businesspartnername,BusinesspartnerVATID,Businesspartnercountry,Periodicity,Duedate,Transactiontype,BusinesspartnerAddress,Businesspartnerpostalcode,Comments,Glaccount,Glaccountdescription,Net Amt (Source),VAT Amt (Source),Gross Amt (Source),Transaction currency,Fx Rate,EY Tx.Code,EY Tx.CodeDesc,Invoice_Credit note,Services_Goods,Description,Country of origin"
+
+		args = []
+		args.append('--type=csv')
+		args.append(f'--collection={collection}')
+		args.append(f'--fields={fields}')
+		args.append(f'--out={output_path}')
+		args.append(f'--uri="{self.project.MONGODB_CONNECTION_STRING.replace("~", "=")}"')
+		args.append(f'--limit=100000')
+
+		command = self.project.MONGOEXPORT
+		self.log.info("%s %s" % (command, " ".join(args)))
+		
+		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=3600 )
+
 	def build_eypi_dotnet(self):
 		args = []
 		args.append('build')
