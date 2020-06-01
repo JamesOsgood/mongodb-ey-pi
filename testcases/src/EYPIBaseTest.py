@@ -45,6 +45,7 @@ class EYPIBaseTest(BaseTest):
 		args.append('--headerline')
 		args.append('--drop')
 		args.append('--type=csv')
+		args.append('--numInsertionWorkers=4')
 		args.append(f'--collection={collection}')
 		args.append(f'--file={filePath}')
 		args.append(f'--uri="{self.project.MONGODB_CONNECTION_STRING.replace("~", "=")}"')
@@ -52,7 +53,7 @@ class EYPIBaseTest(BaseTest):
 		command = self.project.MONGOIMPORT
 		self.log.info("%s %s" % (command, " ".join(args)))
 		
-		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log' )
+		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=3600 )
 
 	def build_eypi_dotnet(self):
 		args = []
