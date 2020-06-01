@@ -10,10 +10,12 @@ class PySysTest(EYPIBaseTest):
 		self.build_eypi_dotnet()
 		
 		test_name = "update"
-		for instance_id, file in self.getFilesToProcess():
-			test_args = { "instance_id" : instance_id, 
-			"wait_time" : 500, 
-			"iterations" : 10}
+		instance_ids = self.getInstanceIds()
+		# instance_ids = [1]
+		for instance_id in instance_ids:
+			test_args = { "instance_id" : str(instance_id), 
+				"wait_time" : 500, 
+				"iterations" : 10}
 
 			self.run_eypi_dotnet(test_name, test_args)
 

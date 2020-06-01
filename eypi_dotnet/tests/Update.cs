@@ -1,6 +1,7 @@
 using System;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using System.Diagnostics;
 using System.Threading;
 using System.Collections.Generic;
@@ -17,13 +18,25 @@ namespace eypi_dotnet.tests
 
             for ( int i = 0; i < totalRuns; i++)
             {
-                var sw = Stopwatch.StartNew();
                 var db = base.ConnectToMongoDB(connectionString, "eypi");
                 var collection = db.GetCollection<BsonDocument>(String.Format("records_{0}", instance_id));
+                var docs = collection.AsQueryable().Sample(100).ToList();
+                var ids = new List<Object>();
+                foreach( var doc in docs )
+                {
+                    var doc_id = doc["_id"];
+                    ids.Add(doc_id);
+                }
 
-                var filter = Builders<BsonDocument>.Filter.Eq("EntityVATID", "45676576");
-                var update = Builders<BsonDocument>.Update.Set("EntityVATID", "45676576");
-                var result = collection.UpdateOne(filter, update);                
+                var sw = Stopwatch.StartNew();
+
+                var filter_doc = new BsonDocument("_id", 
+                    new BsonDocument("$in", new BsonArray(ids)));
+
+                int rand = new Random().Next();
+                var update = Builders<BsonDocument>.Update.Set("Glaccountdescription", "Rand_" + rand.ToString());
+                var result = collection.UpdateMany(filter_doc, update);     
+                Console.WriteLine(String.Format("Matched {0}, updated {1}", result.MatchedCount, result.ModifiedCount));
                 sw.Stop();
 
                 // Insert result

@@ -120,6 +120,9 @@ class EYPIBaseTest(BaseTest):
 			self.waitProcess(p, self.PROCESS_TIMEOUT)
 
 
+	def getInstanceIds(self):
+		return [1, 2, 5, 10]
+
 	def getFilesToProcess(self, data_dir = None):
 		if not data_dir:
 			data_dir = os.path.expanduser(self.project.DATA_DIR)
