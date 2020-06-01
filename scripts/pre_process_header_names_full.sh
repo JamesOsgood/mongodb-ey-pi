@@ -1,0 +1,6 @@
+# data_dir=~/data/eypi/samples
+var="AP_AR,Year,Period,EntityCode,EntityName,EntityVATID,ReportingCountry,Inv.Date,PostingDate,Doc.No,Invoiceno,Reportingperiod,Reportingcurrency,Netamount(repcurr),VATamount(repcurr),Grossamount(repcurr),Globalcurrency,Netamount(globalcurr),VATamount(globalcurr),Grossamount(globalcurr),Tx.Code,Tx.CodeDesc,VATRate,VATCategory,EYTaxCodeNET,EYTaxCodeVAT,Sales_Purchase,Businesspartnernumber,Businesspartnername,BusinesspartnerVATID,Businesspartnercountry,Periodicity,Duedate,Transactiontype,BusinesspartnerAddress,Businesspartnerpostalcode,Comments,Glaccount,Glaccountdescription,Net Amt (Source),VAT Amt (Source),Gross Amt (Source),Transaction currency,Fx Rate,EY Tx.Code,EY Tx.CodeDesc,Invoice_Credit note,Services_Goods,Description,Country of origin"
+cat ~/data/mongodb/eypi/Setup_Data_File_1gb.csv | sed "1s/.*/$var/" > ~/data/mongodb/eypi/processed/Setup_Data_File_1gb_processed.csv
+cat ~/data/mongodb/eypi/Setup_Data_File_2gb.csv | sed "1s/.*/$var/" > ~/data/mongodb/eypi/processed/Setup_Data_File_2gb_processed.csv
+cat ~/data/mongodb/eypi/Setup_Data_File_5gb.csv | sed "1s/.*/$var/" > ~/data/mongodb/eypi/processed/Setup_Data_File_5gb_processed.csv
+cat ~/data/mongodb/eypi/Setup_Data_File_10gb.csv | sed "1s/.*/$var/" > ~/data/mongodb/eypi/processed/Setup_Data_File_10gb_processed.csv
