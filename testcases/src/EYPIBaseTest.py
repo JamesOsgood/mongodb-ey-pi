@@ -65,7 +65,7 @@ class EYPIBaseTest(BaseTest):
 		args.append(f'--fields={fields}')
 		args.append(f'--out={output_path}')
 		args.append(f'--uri="{self.project.MONGODB_CONNECTION_STRING.replace("~", "=")}"')
-		args.append(f'--limit=100000')
+		# args.append(f'--limit=100000')
 
 		command = self.project.MONGOEXPORT
 		self.log.info("%s %s" % (command, " ".join(args)))
