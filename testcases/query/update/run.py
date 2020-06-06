@@ -11,7 +11,6 @@ class PySysTest(EYPIBaseTest):
 		
 		test_name = "update"
 		instance_ids = self.getInstanceIds()
-		# instance_ids = [1]
 		for instance_id in instance_ids:
 			test_args = { "instance_id" : str(instance_id), 
 				"wait_time" : 500, 
