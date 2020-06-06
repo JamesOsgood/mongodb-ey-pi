@@ -10,7 +10,7 @@ class PySysTest(EYPIBaseTest):
 		self.build_eypi_dotnet()
 		
 		test_name = "paginate"
-		for instance_id, file in self.getFilesToProcess():
+		for instance_id in self.getInstanceIds():
 			test_args = { "instance_id" : instance_id, 
 			"page_size" : 100, 
 			"pages_to_skip" : 3, 
