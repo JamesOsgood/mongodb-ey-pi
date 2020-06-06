@@ -99,7 +99,7 @@ class EYPIBaseTest(BaseTest):
 		args = []
 		args.append('run')
 		args.append(f"--uri={self.connectionString}")
-		args.append(f"--test_run={test_run}")
+		args.append(f"--test_run={self.test_run}")
 		args.append(f"--test_name={test_name}")
 		json_args = json.dumps(test_args)
 		args.append(f"--test_args={test_args}")
