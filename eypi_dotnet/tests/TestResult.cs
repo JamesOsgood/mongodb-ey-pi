@@ -5,6 +5,9 @@ namespace eypi_dotnet.tests
 {
     class TestResult
     {
+        [BsonElement("test_run")]
+        public string TestRun { get; set; }
+
         [BsonElement("test_id")]
         public string TestID { get; set; }
 

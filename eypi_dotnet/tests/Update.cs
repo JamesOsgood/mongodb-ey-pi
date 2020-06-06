@@ -10,7 +10,7 @@ namespace eypi_dotnet.tests
 {
     class Update : MongoDBTest
     {
-        public override void RunTest( string connectionString, Dictionary<string, object> testArgs )
+        public override void RunTest( string connectionString, string testRun, Dictionary<string, object> testArgs )
         {
             string instance_id = Convert.ToString(testArgs["instance_id"]);
             int totalRuns = Convert.ToInt32(testArgs["iterations"]);
@@ -40,7 +40,7 @@ namespace eypi_dotnet.tests
                 sw.Stop();
 
                 // Insert result
-                base.WriteTestResult(db, "UPDATE", instance_id, sw.ElapsedMilliseconds);
+                base.WriteTestResult(db, testRun, "UPDATE", instance_id, sw.ElapsedMilliseconds);
                 
                 Thread.Sleep(wait_time);
             }

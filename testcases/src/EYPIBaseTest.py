@@ -15,7 +15,14 @@ class EYPIBaseTest(BaseTest):
 
 		self.test_id = test_id
 		self.db_connection = None
-		self.connectionString = self.project.MONGODB_CONNECTION_STRING.replace("~", "=")
+		self.test_run = self.project.TEST_RUN
+		self.connectionStrings = {}
+
+		self.connectionStrings['MONGODB_M30'] = self.project.CONNECTION_STRING_MONGODB_M30.replace("~", "=")
+		self.connectionStrings['MONGODB_M40'] = self.project.CONNECTION_STRING_MONGODB_M40.replace("~", "=")
+		self.connectionStrings['COSMOSDB_1000'] = self.project.CONNECTION_STRING_COSMOSDB_1000.replace("~", "=")
+
+		self.connectionString = self.connectionStrings[self.test_run]
 
 		# Message batching
 		self.currentMessageBatch = []
@@ -48,7 +55,7 @@ class EYPIBaseTest(BaseTest):
 		args.append('--numInsertionWorkers=4')
 		args.append(f'--collection={collection}')
 		args.append(f'--file={filePath}')
-		args.append(f'--uri="{self.project.MONGODB_CONNECTION_STRING.replace("~", "=")}"')
+		args.append(f'--uri="{self.connectionString}"')
 
 		command = self.project.MONGOIMPORT
 		self.log.info("%s %s" % (command, " ".join(args)))
@@ -64,7 +71,7 @@ class EYPIBaseTest(BaseTest):
 		args.append(f'--collection={collection}')
 		args.append(f'--fields={fields}')
 		args.append(f'--out={output_path}')
-		args.append(f'--uri="{self.project.MONGODB_CONNECTION_STRING.replace("~", "=")}"')
+		args.append(f'--uri="{self.connectionString}"')
 		# args.append(f'--limit=100000')
 
 		command = self.project.MONGOEXPORT
@@ -92,6 +99,7 @@ class EYPIBaseTest(BaseTest):
 		args = []
 		args.append('run')
 		args.append(f"--uri={self.connectionString}")
+		args.append(f"--test_run={test_run}")
 		args.append(f"--test_name={test_name}")
 		json_args = json.dumps(test_args)
 		args.append(f"--test_args={test_args}")
@@ -159,6 +167,7 @@ class EYPIBaseTest(BaseTest):
 		test_results = db.test_results
 		
 		doc = { 
+			'test_run' : self.test_run,
 			'test_id' : self.test_id, 
 			'instance_id' : instance_id,
 			'ts' : datetime.now(), 
