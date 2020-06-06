@@ -9,8 +9,7 @@ class PySysTest(EYPIBaseTest):
 
 	def execute(self):
 		
-
-		isinstances = self.getInstanceIds()
+		instances = self.getInstanceIds()
 		dir = os.path.expanduser(os.path.join(self.project.DATA_DIR, 'processed'))
 		for instance_id, file in self.getFilesToProcess(dir):
 			start = datetime.now()
