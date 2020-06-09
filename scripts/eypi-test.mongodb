@@ -1,0 +1,27 @@
+// MongoDB Playground
+// To disable this template go to Settings | MongoDB | Use Default Template For Playground.
+// Make sure you are connected to enable completions and to be able to run a playground.
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// Select the database to use.
+use('eypi_sample');
+
+// Run an aggregation to get the average time for the given test runs
+const aggregation = [{$match: {
+  test_run : 'MONGODB_M40',
+  test_id  : 'INGEST'
+}}, {$group: {
+  _id: {
+    test_run : '$test_run',
+    test_id : '$test_id',
+    instance_id : '$instance_id'
+  },
+  avg :
+    { $avg : '$time_taken'}
+}}, {$project: {
+  instance_id : '$_id.instance_id',
+  time_taken : '$avg',
+  _id : 0
+}}];
+
+db.test_results.aggregate(aggregation);
