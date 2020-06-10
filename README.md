@@ -8,7 +8,7 @@ Install
 * python3
 * dotnet core
 
-pip3 install --user pymongo dnspython pysys
+sudo pip3 install pymongo dnspython pysys
 
 ## Preparation
 
