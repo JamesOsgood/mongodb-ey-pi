@@ -38,4 +38,44 @@ This will run the automated python test to import all the CSV data files into Mo
 
 The results of the test are saved back into the MongoDB database in a collection called ```test_results```.
 
+## Tests
 
+### IMPORT
+
+```
+cd testcases/import
+
+pysys run import_all
+```
+
+This test uses [mongoimport](https://docs.mongodb.com/manual/reference/program/mongoimport/) to import all of the sample files
+
+### PAGINATE
+
+```
+cd testcases/query
+
+pysys run paginate
+```
+
+This test calls [Paginate.cs](eypi_dotnet/tests/Paginate.cs) to simulate a user selecting page 4 of records of 100 pages.
+
+### UPDATE
+
+```
+cd testcases/query
+
+pysys run update
+```
+
+This test calls [Update.cs](eypi_dotnet/tests/Update.cs) to simulate a user updating 100 randomly chosen records.
+
+### IMPORT
+
+```
+cd testcases/download
+
+pysys run download_all
+```
+
+This test uses [mongoexport](https://docs.mongodb.com/manual/reference/program/mongoexport/) to import all of the sample collection
