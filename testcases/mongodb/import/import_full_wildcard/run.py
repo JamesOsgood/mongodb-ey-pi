@@ -21,7 +21,7 @@ class PySysTest(EYPIBaseTest):
 
 	def create_wildcard_index(self, instance_id):
 		client = self.get_db_connection()
-		collection = client.get_collection({f"records_{instance_id}"})
+		collection = client.get_collection(f"records_{instance_id}")
 		collection.create_index("$**")
 
 
