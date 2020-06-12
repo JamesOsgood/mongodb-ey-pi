@@ -46,11 +46,12 @@ class EYPIBaseTest(BaseTest):
 
 		return self.db_connection
 	
-	def importFileMongoImport(self, filePath, collection):
+	def importFileMongoImport(self, filePath, collection, dropCollection=True):
 
 		args = []
 		args.append('--headerline')
-		args.append('--drop')
+		if dropCollection:	
+			args.append('--drop')
 		args.append('--type=csv')
 		args.append('--numInsertionWorkers=4')
 		args.append(f'--collection={collection}')
