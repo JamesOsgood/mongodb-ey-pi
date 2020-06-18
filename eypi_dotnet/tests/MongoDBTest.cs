@@ -6,7 +6,7 @@ namespace eypi_dotnet.tests
 {
     abstract class MongoDBTest
     {
-        abstract public void RunTest(string connectionString, string testRun, Dictionary<string, object> testArgs);
+        abstract public void RunTest(string connectionString, string database, string testRun, Dictionary<string, object> testArgs);
     
         // Connect to MongoDB
         protected IMongoDatabase ConnectToMongoDB( string connectionString, string database )

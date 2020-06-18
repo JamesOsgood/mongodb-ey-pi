@@ -13,6 +13,9 @@ namespace eypi_dotnet
             [Option('u', "uri", Required = true, HelpText = "MongoDB URI")]
             public string Uri { get; set; }
 
+            [Option('d', "database", Required = true, HelpText = "MongoDB Database")]
+            public string Database { get; set; }
+
             [Option('r', "test_run", Required = true, HelpText = "Test run")]
             public string TestRun { get; set; }
 
@@ -31,7 +34,7 @@ namespace eypi_dotnet
                         Dictionary<string, object> testArgs = 
                         JsonConvert.DeserializeObject<Dictionary<string, object>>(o.TestArgs);
                         var runner = new TestRunner();
-                        runner.RunTest(o.Uri, o.TestRun, o.TestName, testArgs);
+                        runner.RunTest(o.Uri, o.Database, o.TestRun, o.TestName, testArgs);
                    });
         }
 
@@ -45,12 +48,12 @@ namespace eypi_dotnet
                 _tests.Add("update", new Update());
             }
         
-            public void RunTest(string connectionString, string testRun, string testName, Dictionary<string, object> testArgs )
+            public void RunTest(string connectionString, string database, string testRun, string testName, Dictionary<string, object> testArgs )
             {
                 if (_tests.ContainsKey(testName))
                 {
                     var test = _tests[testName];
-                    test.RunTest(connectionString, testRun, testArgs);
+                    test.RunTest(connectionString, database, testRun, testArgs);
                     Console.Out.WriteLine(String.Format("Successfully run {0}", testName));
                 }
                 else

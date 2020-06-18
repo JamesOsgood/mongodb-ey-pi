@@ -9,7 +9,7 @@ namespace eypi_dotnet.tests
 {
     class Paginate : MongoDBTest
     {
-        public override void RunTest( string connectionString, string testRun, Dictionary<string, object> testArgs )
+        public override void RunTest( string connectionString, string database, string testRun, Dictionary<string, object> testArgs )
         {
             string instance_id = Convert.ToString(testArgs["instance_id"]);
             int totalRuns = Convert.ToInt32(testArgs["iterations"]);
@@ -20,7 +20,7 @@ namespace eypi_dotnet.tests
             for ( int i = 0; i < totalRuns; i++)
             {
                 var sw = Stopwatch.StartNew();
-                var db = base.ConnectToMongoDB(connectionString, "eypi");
+                var db = base.ConnectToMongoDB(connectionString, database);
                 var collection = db.GetCollection<BsonDocument>(String.Format("records_{0}", instance_id));
                 var documents = collection.Find(new BsonDocument()).Limit(page_size).Skip(page_size * pages_to_skip).ToList();
                 sw.Stop();

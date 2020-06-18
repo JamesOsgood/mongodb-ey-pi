@@ -89,7 +89,7 @@ class EYPIBaseTest(BaseTest):
 
 		command = self.project.DOTNET
 		self.log.info("%s %s" % (command, " ".join(args)))
-		workingDir = os.path.abspath("../../eypi_dotnet")
+		workingDir = os.path.abspath("../../../eypi_dotnet")
 
 		index = self.get_dotnet_index()
 		path_stdout = f'dotnet_build_out_{index}.log'
@@ -100,6 +100,8 @@ class EYPIBaseTest(BaseTest):
 		args = []
 		args.append('run')
 		args.append(f"--uri={self.connectionString}")
+		database_name = self.get_database_name_from_uri(self.connectionString)
+		args.append(f"--database={database_name}")
 		args.append(f"--test_run={self.test_run}")
 		args.append(f"--test_name={test_name}")
 		json_args = json.dumps(test_args)
@@ -110,7 +112,7 @@ class EYPIBaseTest(BaseTest):
 
 		command = self.project.DOTNET
 		self.log.info("%s %s" % (command, " ".join(args)))
-		workingDir = os.path.abspath("../../eypi_dotnet")
+		workingDir = os.path.abspath("../../../eypi_dotnet")
 
 		index = self.get_dotnet_index()
 		path_stdout = f'dotnet_run_out_{index}.log'
@@ -145,9 +147,13 @@ class EYPIBaseTest(BaseTest):
 		for p in processes:
 			self.waitProcess(p, self.PROCESS_TIMEOUT)
 
+	def get_database_name_from_uri(self, uri):
+		client = MongoClient(uri)
+		return client.get_database().name
 
 	def getInstanceIds(self):
-		return [1, 2, 5, 10]
+		str_instances = f'[{self.project.TEST_INSTANCE_IDS}]'
+		return eval(str_instances)
 
 	def getFilesToProcess(self, data_dir = None):
 		if not data_dir:

@@ -1,8 +1,20 @@
-CONNECTION_STRING_MONGODB_M40=mongodb+srv://eypi:ZIfIg2cUR9udGmKy@eypi-m40.kmf0t.azure.mongodb.net/eypi?w~majority
-CONNECTION_STRING_MONGODB_M30=mongodb+srv://eypi:ZIfIg2cUR9udGmKy@eypi-m30.kmf0t.azure.mongodb.net/eypi?w~majority
+# The various options for connection strings
+CONNECTION_STRING_MONGODB_M40=mongodb+srv://eypi:<password>@rpi-sensor-data.ifxxs.mongodb.net/eypi_sample?retryWrites~true&w~majority
+CONNECTION_STRING_MONGODB_M30=mongodb+srv://eypi:<password>y@rpi-sensor-data.ifxxs.mongodb.net/eypi_sample?retryWrites~true&w~majority
 CONNECTION_STRING_COSMOSDB_1000=mongodb://eypi:ZJvPTe0JuDjWstGHuSic9d0RcrZn5jYrx6gltpWOpFAmnuM3C7ZKbAaE6Upr10sklTpuIJKTR8977uTPdjdFbQ~~@eypi.mongo.cosmos.azure.com:10255/?ssl~true&replicaSet~globaldb&retrywrites~false
-TEST_RUN=MONGODB_M30
-DATA_DIR=~/data/mongodb/eypi
+
+# Which connection string to use
+TEST_RUN=MONGODB_M40
+
+# Location of the Sample CSV files
+DATA_DIR=/Users/james/data/mongodb/eypi/sample
+
+# Location of the MongoDB Import / Export tools
 MONGOIMPORT=/usr/local/m/versions/4.2.7/bin/mongoimport
 MONGOEXPORT=/usr/local/m/versions/4.2.7/bin/mongoexport
+
+# Installation directory of dotnet core executable
 DOTNET=/usr/local/share/dotnet/dotnet
+
+# Tests to run
+TEST_INSTANCE_IDS=1,2
