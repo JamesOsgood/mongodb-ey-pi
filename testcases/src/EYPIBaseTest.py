@@ -46,7 +46,10 @@ class EYPIBaseTest(BaseTest):
 
 		return self.db_connection
 	
-	def importFileMongoImport(self, filePath, collection, dropCollection=True):
+	def importFileMongoImport(self, filePath, collection, dropCollection=True, connectionString = None):
+
+		if not connectionString:
+			connectionString = self.connectionString
 
 		args = []
 		args.append('--headerline')
@@ -56,14 +59,17 @@ class EYPIBaseTest(BaseTest):
 		args.append('--numInsertionWorkers=4')
 		args.append(f'--collection={collection}')
 		args.append(f'--file={filePath}')
-		args.append(f'--uri="{self.connectionString}"')
+		args.append(f'--uri="{connectionString}"')
 
 		command = self.project.MONGOIMPORT
 		self.log.info("%s %s" % (command, " ".join(args)))
 		
 		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=3600 )
 
-	def downloadFile(self, collection, output_path):
+	def downloadFile(self, collection, output_path, connectionString = None):
+
+		if not connectionString:
+			connectionString = self.connectionString
 
 		fields="AP_AR,Year,Period,EntityCode,EntityName,EntityVATID,ReportingCountry,Inv.Date,PostingDate,Doc.No,Invoiceno,Reportingperiod,Reportingcurrency,Netamount(repcurr),VATamount(repcurr),Grossamount(repcurr),Globalcurrency,Netamount(globalcurr),VATamount(globalcurr),Grossamount(globalcurr),Tx.Code,Tx.CodeDesc,VATRate,VATCategory,EYTaxCodeNET,EYTaxCodeVAT,Sales_Purchase,Businesspartnernumber,Businesspartnername,BusinesspartnerVATID,Businesspartnercountry,Periodicity,Duedate,Transactiontype,BusinesspartnerAddress,Businesspartnerpostalcode,Comments,Glaccount,Glaccountdescription,Net Amt (Source),VAT Amt (Source),Gross Amt (Source),Transaction currency,Fx Rate,EY Tx.Code,EY Tx.CodeDesc,Invoice_Credit note,Services_Goods,Description,Country of origin"
 
@@ -72,7 +78,7 @@ class EYPIBaseTest(BaseTest):
 		args.append(f'--collection={collection}')
 		args.append(f'--fields={fields}')
 		args.append(f'--out={output_path}')
-		args.append(f'--uri="{self.connectionString}"')
+		args.append(f'--uri="{connectionString}"')
 		# args.append(f'--limit=100000')
 
 		command = self.project.MONGOEXPORT

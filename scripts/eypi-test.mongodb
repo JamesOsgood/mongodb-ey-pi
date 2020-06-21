@@ -9,7 +9,7 @@ use('eypi_sample');
 // Run an aggregation to get the average time for the given test runs
 const aggregation = [{$match: {
   test_run : 'MONGODB_M40',
-  test_id  : 'INGEST'
+  test_id  : { '$in' : ['PAGINATE', 'UPDATE'] }
 }}, {$group: {
   _id: {
     test_run : '$test_run',
@@ -17,10 +17,14 @@ const aggregation = [{$match: {
     instance_id : '$instance_id'
   },
   avg :
-    { $avg : '$time_taken'}
+    { $avg : '$time_taken'},
+  cnt : 
+    { $sum : 1 }
 }}, {$project: {
+  test_id : '$_id.test_id',
   instance_id : '$_id.instance_id',
   time_taken : '$avg',
+  total_tests : '$cnt',
   _id : 0
 }}];
 
