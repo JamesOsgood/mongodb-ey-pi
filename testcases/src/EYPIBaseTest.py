@@ -64,7 +64,7 @@ class EYPIBaseTest(BaseTest):
 		command = self.project.MONGOIMPORT
 		self.log.info("%s %s" % (command, " ".join(args)))
 		
-		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=3600 )
+		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=360000 )
 
 	def downloadFile(self, collection, output_path, connectionString = None):
 
@@ -84,7 +84,7 @@ class EYPIBaseTest(BaseTest):
 		command = self.project.MONGOEXPORT
 		self.log.info("%s %s" % (command, " ".join(args)))
 		
-		self.startProcess(command, args, state=FOREGROUND, stdout='mongoexport_out.log', stderr='mongoexport_err.log', timeout=3600 )
+		self.startProcess(command, args, state=FOREGROUND, stdout='mongoexport_out.log', stderr='mongoexport_err.log', timeout=360000 )
 
 	def build_eypi_dotnet(self):
 		args = []
