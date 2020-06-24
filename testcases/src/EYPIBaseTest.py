@@ -56,7 +56,7 @@ class EYPIBaseTest(BaseTest):
 		if dropCollection:	
 			args.append('--drop')
 		args.append('--type=csv')
-		args.append('--numInsertionWorkers=4')
+		args.append('--numInsertionWorkers=8')
 		args.append(f'--collection={collection}')
 		args.append(f'--file={filePath}')
 		args.append(f'--uri="{connectionString}"')
