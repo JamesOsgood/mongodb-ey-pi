@@ -66,6 +66,52 @@ class EYPIBaseTest(BaseTest):
 		
 		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=360000 )
 
+	def importFileBatchRead(self, filePath, collection, dropCollection=True, connectionString = None, ignore_empty_fields = True):
+
+		self.log.info(f'Processing {filePath}')
+		if not connectionString:
+			connectionString = self.connectionString
+
+		client = MongoClient(connectionString)
+		coll = client.get_database()[collection]
+		if dropCollection:
+			coll.drop()
+
+		# Open the file
+		headers = None
+		batch = []
+		BATCH_SIZE = 10000
+		line_count = 0
+		with open(filePath) as f:
+			for line in f.readlines():
+				values = line.split(',')
+				if not headers:
+					headers = values
+					for index in range(len(headers)):
+						header = headers[index]
+						headers[index] = header.replace('.', '_')
+				else:
+					doc = {}
+					for index in range(len(headers)):
+						value = values[index].strip()
+						if ignore_empty_fields:
+							if len(value) > 0:
+								doc[headers[index]] = value
+						else:
+							doc[headers[index]] = value
+					if len(doc) > 0:
+						batch.append(doc)
+						if len(batch) == BATCH_SIZE:
+							coll.insert_many(batch)
+							batch = []
+				line_count += 1
+				if line_count % BATCH_SIZE == 0:
+					self.log.info(f'Done {line_count}')
+
+		if len(batch) == BATCH_SIZE:
+			coll.insert_many(batch)
+			batch = []
+
 	def downloadFile(self, collection, output_path, connectionString = None):
 
 		if not connectionString:
