@@ -14,7 +14,7 @@ class PySysTest(EYPIBaseTest):
 		for instance_id, file in self.getFilesToProcess(dir):
 			start = datetime.now()
 			if instance_id in instances:
-				self.importFileBatchRead(file, f"records_{instance_id}", ignore_blanks==False)
+				self.importFileBatchRead(file, f"records_{instance_id}", ignore_blanks=False)
 				time_taken = datetime.now() - start
 				self.write_test_result(instance_id, time_taken.total_seconds())
 
