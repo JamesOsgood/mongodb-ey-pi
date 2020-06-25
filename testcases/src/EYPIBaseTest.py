@@ -46,7 +46,7 @@ class EYPIBaseTest(BaseTest):
 
 		return self.db_connection
 	
-	def importFileMongoImport(self, filePath, collection, dropCollection=True, connectionString = None):
+	def importFileMongoImport(self, filePath, collection, dropCollection=True, connectionString = None, ignore_blanks=False):
 
 		if not connectionString:
 			connectionString = self.connectionString
@@ -55,6 +55,9 @@ class EYPIBaseTest(BaseTest):
 		args.append('--headerline')
 		if dropCollection:	
 			args.append('--drop')
+
+		if ignore_blanks:
+			args.append('--ignoreBlanks')
 		args.append('--type=csv')
 		args.append('--numInsertionWorkers=8')
 		args.append(f'--collection={collection}')
@@ -66,7 +69,7 @@ class EYPIBaseTest(BaseTest):
 		
 		self.startProcess(command, args, state=FOREGROUND, stdout='mongoimport_out.log', stderr='mongoimport_err.log', timeout=360000 )
 
-	def importFileBatchRead(self, filePath, collection, dropCollection=True, connectionString = None, ignore_empty_fields = True):
+	def importFileBatchRead(self, filePath, collection, dropCollection=True, connectionString = None, ignore_blanks = True):
 
 		self.log.info(f'Processing {filePath}')
 		if not connectionString:
@@ -94,7 +97,7 @@ class EYPIBaseTest(BaseTest):
 					doc = {}
 					for index in range(len(headers)):
 						value = values[index].strip()
-						if ignore_empty_fields:
+						if ignore_blanks:
 							if len(value) > 0:
 								doc[headers[index]] = value
 						else:
