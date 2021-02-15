@@ -10,7 +10,7 @@ class PySysTest(EYPIBaseTest):
 	def execute(self):
 		
 		drop_collection = True
-		test = 'medium'
+		test = 'small'
 		data_dir = os.path.expanduser(os.path.join(self.project.DATA_DIR, 'test_files', test))
 		for filename in os.listdir(data_dir):
 			file = os.path.join(data_dir, filename)
