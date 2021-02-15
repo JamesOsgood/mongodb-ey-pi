@@ -12,7 +12,7 @@ class PySysTest(EYPIBaseTest):
 	def execute(self):
 		
 		thread_files = {}
-		THREAD_COUNT = 2
+		THREAD_COUNT = int(self.project.TEST_THREADS)
 		for thread_index in range(THREAD_COUNT):
 			thread_files[thread_index] = []
 		test = self.project.TEST_FILE_SIZE
