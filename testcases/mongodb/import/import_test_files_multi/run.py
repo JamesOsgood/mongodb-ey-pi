@@ -34,6 +34,7 @@ class PySysTest(EYPIBaseTest):
 			args['drop_collection'] = drop_collection
 			args['thread_index'] = thread_index
 			self.startBackgroundThread( f"Import file", self.import_file_proc, args)
+			self.wait(5.0)
 			drop_collection = False
 
 	
