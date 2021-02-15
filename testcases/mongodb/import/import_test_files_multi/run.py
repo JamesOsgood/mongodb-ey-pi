@@ -7,6 +7,7 @@ from EYPIBaseTest import EYPIBaseTest
 class PySysTest(EYPIBaseTest):
 	def __init__ (self, descriptor, outsubdir, runner):
 		EYPIBaseTest.__init__(self, 'INGEST', descriptor, outsubdir, runner)
+		self.files_to_process = 0
 
 	def execute(self):
 		
@@ -22,9 +23,9 @@ class PySysTest(EYPIBaseTest):
 			thread_files[index % THREAD_COUNT].append(file)
 			index += 1
 
-		# for thread_index in thread_files.keys():
-		# 	files = thread_files[thread_index]
-		# 	self.log.info(len(files))
+		for thread_index in thread_files.keys():
+			files = thread_files[thread_index]
+			self.files_to_process += len(files)
 
 		drop_collection = True
 		for thread_index in thread_files.keys():
@@ -37,7 +38,10 @@ class PySysTest(EYPIBaseTest):
 			self.wait(5.0)
 			drop_collection = False
 
-	
+		while self.files_to_process > 0:
+			self.log.info(f'Files to process {self.files_to_process}')
+			self.wait(5.0)
+
 	def import_file_proc(self, stopping, **kwargs):
 		files = kwargs['files']
 		drop_collection = kwargs['drop_collection']
@@ -50,6 +54,7 @@ class PySysTest(EYPIBaseTest):
 			time_taken = datetime.now() - start
 			self.log.info(f'Imported {file} in {time_taken.total_seconds()}s')
 			drop_collection = False
+			self.files_to_process -= 1
 
 	def validate(self):
 		pass
