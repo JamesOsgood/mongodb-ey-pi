@@ -14,7 +14,7 @@ class PySysTest(EYPIBaseTest):
 		THREAD_COUNT = 2
 		for thread_index in range(THREAD_COUNT):
 			thread_files[thread_index] = []
-		test = 'small'
+		test = 'medium'
 		data_dir = os.path.expanduser(os.path.join(self.project.DATA_DIR, 'test_files', test))
 		index = 0
 		for filename in os.listdir(data_dir):
