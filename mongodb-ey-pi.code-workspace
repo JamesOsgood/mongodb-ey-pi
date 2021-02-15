@@ -20,6 +20,11 @@
 			"pyfixmsg",
 			"xaxis",
 			"zorder"
+		],
+		"python.analysis.extraPaths": [
+			"../test-base/testing/src",
+			"./testcases/src",
+			"../../pyfixmsg"
 		]
 	}
 }
