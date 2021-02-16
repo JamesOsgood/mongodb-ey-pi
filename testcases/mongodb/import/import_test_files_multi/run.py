@@ -10,7 +10,8 @@ class PySysTest(EYPIBaseTest):
 		self.files_to_process = 0
 
 	def execute(self):
-		
+		self.drop_and_recreate_collection()
+
 		thread_files = {}
 		THREAD_COUNT = int(self.project.TEST_THREADS)
 		for thread_index in range(THREAD_COUNT):
@@ -32,10 +33,9 @@ class PySysTest(EYPIBaseTest):
 			files = thread_files[thread_index]
 			args = {}
 			args['files'] = files
-			args['drop_collection'] = drop_collection
 			args['thread_index'] = thread_index
 			self.startBackgroundThread( f"Import file", self.import_file_proc, args)
-			self.wait(5.0)
+			self.wait(2.0)
 			drop_collection = False
 
 		while self.files_to_process > 0:
@@ -44,17 +44,44 @@ class PySysTest(EYPIBaseTest):
 
 	def import_file_proc(self, stopping, **kwargs):
 		files = kwargs['files']
-		drop_collection = kwargs['drop_collection']
 		thread_index = kwargs['thread_index']
 
 		for file in files:
 			self.log.info(f'{thread_index}: Importing {file}')
 			start = datetime.now()
-			self.importFileMongoImport(file, f"records", dropCollection=drop_collection)
+			self.importFileMongoImport(file, f"records", dropCollection=False)
 			time_taken = datetime.now() - start
 			self.log.info(f'Imported {file} in {time_taken.total_seconds()}s')
 			drop_collection = False
 			self.files_to_process -= 1
+
+	def drop_and_recreate_collection(self):
+		db = self.get_db_connection()
+		coll = db.records
+		field_names = ['Year',
+		          'Period',
+				  'EntityName',
+				  'EntityVATID',
+				  'Inv.Date',
+				  'Reportingperiod',
+				  'Netamount(repcurr)',
+				  'VATamount(repcurr)',
+				  'Tx.Code',
+				  'Tx.CodeDesc',
+				  'Businesspartnernumber',
+				  'Businesspartnername',
+				  'Businesspartnercountry',
+				  'Glaccount',
+				  'Glaccountdescription',
+				  'EY Tx.CodeDesc'
+				  ]
+
+		coll.drop()
+		wildcard = {}
+		for field_name in field_names:
+			wildcard[field_name] = 1
+		coll.create_index('$**', wildcardProjection = wildcard)
+
 
 	def validate(self):
 		pass
